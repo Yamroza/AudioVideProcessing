@@ -6,30 +6,69 @@ from skimage.feature import peak_local_max
 from scipy import ndimage
 import numpy as np
 import time
+import math
 
-#img scale
-#MxN
-#MxN/(1.2)^k
-
-
-
-
-
+#SELECT INPUT FILE HERE
 FILENAME='fruits.jpg'
-THRESHOLD_ABS=0.15
-THRESHOLD_REL=0.55
-
 FILENAME='water_texture.jpg'
-THRESHOLD_ABS=0.2
-THRESHOLD_REL=0.55
-
 FILENAME='sunflowers.jpg'
-THRESHOLD_ABS=0.0
-THRESHOLD_REL=0.55
 
-STEPS=21
-SIGMA_O = 2/1.414
-SIGMA_RATIO = 1.2
+
+#PARAMETERS
+if FILENAME=='fruits.jpg':
+    THRESHOLD_ABS=0.0005
+    THRESHOLD_REL=0.5
+    STEPS=9
+    SIGMA_O = 2/1.414
+    SIGMA_RATIO = 1.4
+
+
+if FILENAME=='water_texture.jpg':
+    THRESHOLD_ABS=0.01
+    THRESHOLD_REL=0.54
+    STEPS=8
+    SIGMA_O = 2/1.414
+    SIGMA_RATIO = 1.4
+
+
+if FILENAME=='sunflowers.jpg':
+    THRESHOLD_ABS=0.0
+    THRESHOLD_REL=0.45
+    STEPS=8
+    SIGMA_O = 2/1.414
+    SIGMA_RATIO = 1.6
+
+
+#REMOVE OVERLAPPING CIRCLES
+def prune_circles(circles,img):
+    to_remove=[]
+    for i in range(len(circles[0])):
+    
+        if i in to_remove:
+            continue
+        cx1=circles[0][i]
+        cy1=circles[1][i]
+        rad1=circles[2][i]
+        for k in range(i+1,len(circles[0])): 
+            
+            new_cord=[[],[],[]]
+            
+            if k in to_remove:
+                continue
+
+            cx2=circles[0][k]
+            cy2=circles[1][k]
+            rad2=circles[2][k]
+            if math.sqrt((cx1-cx2)**2+(cy1-cy2)**2)<(rad2+rad1):
+                to_remove.append(i)
+                break
+
+
+    circles[0]=np.delete(circles[0],to_remove)
+    circles[1]=np.delete(circles[1],to_remove)
+    circles[2]=np.delete(circles[2],to_remove)
+    
+    return circles
 
 
 def show_all_circles(image, cx, cy, rad, color='r'):
@@ -51,6 +90,7 @@ def show_all_circles(image, cx, cy, rad, color='r'):
     plt.show()
 
 
+#FIND BLOBS BY CHANGING FILTER SIZE
 def find_circles_changing_filter(image,scales):
 
     coordinates=[[],[],[]]
@@ -63,8 +103,7 @@ def find_circles_changing_filter(image,scales):
             filtered = ndimage.gaussian_laplace(image, sigma=s)**2
         filtered*=s**2
         
-
-
+        #FIND PEAKS
         peaks = peak_local_max(
             filtered,
             threshold_abs=THRESHOLD_ABS,
@@ -80,6 +119,7 @@ def find_circles_changing_filter(image,scales):
     return coordinates    
     
     
+#FIND BLOBS BY CHANGING IMAGE SIZE
 def find_circles_changing_image(original_image,scales):
 
     coordinates=[[],[],[]]
@@ -97,9 +137,8 @@ def find_circles_changing_image(original_image,scales):
         else:
             filtered = ndimage.gaussian_laplace(image, sigma=SIGMA_O)**2
         
+        filtered=transform.resize(filtered, original_image.shape)
         
-        #filtered*=SIGMA_O**2
-
             
         peaks = peak_local_max(
             filtered,
@@ -108,8 +147,6 @@ def find_circles_changing_image(original_image,scales):
             footprint=np.ones((3,3))
         )
         
-        for i in range(len(peaks)):
-            peaks[i]= [int(item/rescale_factor) for item in peaks[i]]
 
         if len(peaks[:,0])>0:
             coordinates[0]=np.concatenate([coordinates[0],peaks[:,0]])
@@ -131,18 +168,23 @@ scales=np.array([SIGMA_O * (SIGMA_RATIO ** i) for i in range(STEPS)])
 
 start = time.time()
 coordinates=find_circles_changing_filter(gray_image,scales)
+if FILENAME!='sunflowers.jpg':
+    coordinates=prune_circles(coordinates,original_image)
 end = time.time()
 print("INFO: Operation by changing the image filter took: %.3f ms" %  ((end - start)*1000))
-
 show_all_circles(original_image, coordinates[1], coordinates[0],coordinates[2])
+
+
 
 start = time.time()
 coordinates=find_circles_changing_image(gray_image,scales)
+if FILENAME!='sunflowers.jpg':
+    coordinates=prune_circles(coordinates,original_image)
 end = time.time()
 print("INFO: Operation by changing the image size took: %.3f ms" %  ((end - start)*1000))
-
-
 show_all_circles(original_image, coordinates[1], coordinates[0],coordinates[2])
+
+
         
 
 
