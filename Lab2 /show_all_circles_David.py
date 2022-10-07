@@ -1,3 +1,10 @@
+# Laboratory 2. of Audio Processing, Video Processing and Computer Vision
+# Scale-Space Blob Detectors
+# Authors: 
+# - David Štych
+# - Aleksandra Jamróz
+
+
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from skimage import io,color,img_as_float,transform
