@@ -12,11 +12,11 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from skimage import io
+from skimage import io,exposure
 from sklearn.metrics import jaccard_score
 from skimage.util import img_as_float
 from skimage.measure import label
-from skimage.filters import threshold_otsu, gaussian
+from skimage.filters import threshold_otsu, gaussian, median
 import cv2
 
 # -----------------------------------------------------------------------------
@@ -24,7 +24,6 @@ import cv2
 #     FUNCTIONS
 #
 # -----------------------------------------------------------------------------
-
 # ----------------------------- Segmentation function -------------------------
 def cell_segmentation(img_file):
     """
@@ -46,9 +45,32 @@ def cell_segmentation(img_file):
     image = io.imread(img_file)
     image = img_as_float(image)
     image = gaussian(image, 2)
+    #PREPROCESSING
+    #image=exposure.adjust_log(image, gain=1, inv=False)
+    #image = median(image)
+    image=exposure.equalize_adapthist(image)
+
+
     otsu_th = threshold_otsu(image)
     predicted_mask = (image > otsu_th).astype('int')
-    
+
+
+    """
+    print(np.max(image))
+    print(np.mean(image))
+    print(np.median(image))
+
+
+
+    plt.imshow(image, cmap='gray')
+    plt.show()
+    h, bins = exposure.histogram(image)
+    plt.figure()
+    plt.plot(bins,h)
+    plt.show()
+    plt.imshow(predicted_mask, cmap='gray')
+    plt.show()
+    """
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     return predicted_mask
     
@@ -140,8 +162,10 @@ plt.close('all')
 # -----------------------------------------------------------------------------
 
 data_dir= os.curdir
-path_im='reduced_subset/rawimages'
-path_gt='reduced_subset/groundtruth'
+#path_im='reduced_subset/rawimages'
+#path_gt='reduced_subset/groundtruth'
+path_im='subset/rawimages'
+path_gt='subset/groundtruth'
 img_files = [ os.path.join(data_dir,path_im,f) for f in sorted(os.listdir(os.path.join(data_dir,path_im))) 
             if (os.path.isfile(os.path.join(data_dir,path_im,f)) and f.endswith('.tif')) ]
 
