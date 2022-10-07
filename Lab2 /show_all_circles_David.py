@@ -13,13 +13,13 @@ FILENAME='fruits.jpg'
 FILENAME='water_texture.jpg'
 FILENAME='sunflowers.jpg'
 
+SIGMA_O = 2/1.414
 
 #PARAMETERS
 if FILENAME=='fruits.jpg':
     THRESHOLD_ABS=0.0005
     THRESHOLD_REL=0.5
     STEPS=9
-    SIGMA_O = 2/1.414
     SIGMA_RATIO = 1.4
 
 
@@ -27,7 +27,6 @@ if FILENAME=='water_texture.jpg':
     THRESHOLD_ABS=0.01
     THRESHOLD_REL=0.54
     STEPS=8
-    SIGMA_O = 2/1.414
     SIGMA_RATIO = 1.4
 
 
@@ -35,7 +34,6 @@ if FILENAME=='sunflowers.jpg':
     THRESHOLD_ABS=0.0
     THRESHOLD_REL=0.45
     STEPS=8
-    SIGMA_O = 2/1.414
     SIGMA_RATIO = 1.6
 
 
@@ -77,8 +75,6 @@ def show_all_circles(image, cx, cy, rad, color='r'):
     cx, cy: numpy arrays or lists, centers of the detected blobs
     rad: numpy array or list, radius of the detected blobs
     """
-
-
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
     ax.imshow(image, cmap='gray')
@@ -101,7 +97,7 @@ def find_circles_changing_filter(image,scales):
             filtered = ndimage.gaussian_laplace(image, sigma=s)
         else:
             filtered = ndimage.gaussian_laplace(image, sigma=s)**2
-        filtered*=s**2
+        filtered *= s**2
         
         #FIND PEAKS
         peaks = peak_local_max(
@@ -157,19 +153,19 @@ def find_circles_changing_image(original_image,scales):
 
     
 
-original_image=io.imread(FILENAME)
-if len(original_image.shape)>2:
+original_image = io.imread(FILENAME)
+if len(original_image.shape) > 2:
     gray_image = img_as_float(color.rgb2gray(original_image))
 else:
     gray_image = img_as_float(original_image)
 
-scales=np.array([SIGMA_O * (SIGMA_RATIO ** i) for i in range(STEPS)])
+scales = np.array([SIGMA_O * (SIGMA_RATIO ** i) for i in range(STEPS)])
 
 
 start = time.time()
-coordinates=find_circles_changing_filter(gray_image,scales)
-if FILENAME!='sunflowers.jpg':
-    coordinates=prune_circles(coordinates,original_image)
+coordinates = find_circles_changing_filter(gray_image,scales)
+if FILENAME != 'sunflowers.jpg':
+    coordinates = prune_circles(coordinates,original_image)
 end = time.time()
 print("INFO: Operation by changing the image filter took: %.3f ms" %  ((end - start)*1000))
 show_all_circles(original_image, coordinates[1], coordinates[0],coordinates[2])
@@ -177,9 +173,9 @@ show_all_circles(original_image, coordinates[1], coordinates[0],coordinates[2])
 
 
 start = time.time()
-coordinates=find_circles_changing_image(gray_image,scales)
-if FILENAME!='sunflowers.jpg':
-    coordinates=prune_circles(coordinates,original_image)
+coordinates = find_circles_changing_image(gray_image,scales)
+if FILENAME != 'sunflowers.jpg':
+    coordinates = prune_circles(coordinates,original_image)
 end = time.time()
 print("INFO: Operation by changing the image size took: %.3f ms" %  ((end - start)*1000))
 show_all_circles(original_image, coordinates[1], coordinates[0],coordinates[2])
