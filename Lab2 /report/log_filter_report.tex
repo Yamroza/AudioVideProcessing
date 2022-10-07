@@ -53,12 +53,12 @@ We chose $\sigma_0$ value depending on the smallest predicted blob radius, marke
 
 \section{Down-sampling image - scale}
 We selected $\sigma_0$ the same way $\sigma_0=\frac{R_{min}}{\sqrt{2}}$.
-The image is then scalled down with factor $s^k$, while keeping $\sigma$ constant $\sigma=\sigma_0$.
+The image is then scalled down with factor $s^k$, while keeping $\sigma$ constant $\sigma=\sigma_0$. It allows us to keep the same blob sizes as we got in filter-changing algorithm.
 
 In the first iteration, the scale is not changed $s^0$.
 
 \section{Down-sampling image - normalization}
-As $\sigma$ increases, derivatives are attenuated. We need to normalize the filter response by multiplying it by $\sigma^2$.
+As $\sigma$ increases, derivatives are attenuated. We need to normalize the filter response by multiplying it by $\sigma^2$ to keep good algorithm results.
 
 However, when down-sampling the image, we keep $\sigma$ constant. Therefore, it is not necessary to normalize the filter response.
 
