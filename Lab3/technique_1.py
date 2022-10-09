@@ -44,10 +44,9 @@ def cell_segmentation(img_file):
         
     image = io.imread(img_file)
     image = img_as_float(image)
-    image = gaussian(image, 2)
+    #image = gaussian(image, 2)
     #PREPROCESSING
-    #image=exposure.adjust_log(image, gain=1, inv=False)
-    #image = median(image)
+    image = median(image)
     image=exposure.equalize_adapthist(image)
 
 
@@ -105,6 +104,7 @@ def evaluate_masks(img_files, gt_mask_files):
     n=round(N*downs_f)
     # Array containing the IoU associated with each image
     IoU=np.zeros(len(img_files))
+    masks=[]
     
     for i in range(len(img_files)):
         
@@ -149,7 +149,22 @@ def evaluate_masks(img_files, gt_mask_files):
         # The IoU of each image is computed as the average of IoU of each groundtruth cell
         IoU[i]=np.average(IoU_max[:,0])
         print (f"Image {i}, IoU={IoU[i]}")
-        
+
+    
+    
+    #TO REMOVE - SHOW 5 WORST IMAGES
+    """
+    masks.append(predicted_mask)
+       
+
+    for value in sorted(IoU)[:5]:
+        index=list(IoU).index(value)
+        print(index)
+        plt.imshow(io.imread(img_files[index]), cmap='gray')
+        plt.show()
+        plt.imshow(masks[index], cmap='gray')
+        plt.show()
+    """
 
     return np.average(IoU)
 
