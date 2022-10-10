@@ -16,8 +16,17 @@ from skimage import io,exposure
 from sklearn.metrics import jaccard_score
 from skimage.util import img_as_float
 from skimage.measure import label
-from skimage.filters import threshold_otsu, gaussian, median
+from skimage.filters import threshold_otsu, gaussian, median, sobel
+from skimage.util import img_as_ubyte
+from skimage.color import label2rgb, gray2rgb
+from skimage.segmentation import  watershed
 import cv2
+
+#TOREMOVE
+#process only n images to speed up testing
+N_IMAGES=2
+#number of worst images to show
+N_IMGS_TO_SHOW=1
 
 # -----------------------------------------------------------------------------
 #
@@ -51,15 +60,46 @@ def cell_segmentation(img_file):
         
     image = io.imread(img_file)
     image = img_as_float(image)
+    #image = gaussian(image, 2)
     #PREPROCESSING
     image=preprocess(image)
+    
+
+    
+    #otsu_th = threshold_otsu(image)
+    #predicted_mask = (image > otsu_th).astype('int')
+
+    edges = sobel(image)
+    # Identify some background and foreground pixels from the intensity values.
+    # These pixels are used as seeds for watershed.
+    markers = np.zeros_like(image)
+    foreground, background = 1, 2
+    markers[image < 0.11] = background
+    markers[image > 0.55] = foreground
+
+    ws = watershed(edges, markers)
+    predicted_mask = label(ws == foreground)
+    
+    #predicted_mask = expand_labels(predicted_mask, distance=2)
+    """
+    plt.imshow(label2rgb(predicted_mask, image=image, bg_label=0), cmap='gray')
+    plt.show()
+    print(predicted_mask)
+    print(np.max(image))
+    print(np.mean(image))
+    print(np.median(image))
 
 
-    otsu_th = threshold_otsu(image)
-    predicted_mask = (image > otsu_th).astype('int')
 
-
-
+    plt.imshow(image, cmap='gray')
+    plt.show()
+    h, bins = exposure.histogram(image)
+    plt.figure()
+    plt.plot(bins,h)
+    plt.show()
+    plt.imshow(predicted_mask, cmap='gray')
+    plt.show()
+    """
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     return predicted_mask
     
@@ -94,6 +134,9 @@ def evaluate_masks(img_files, gt_mask_files):
     n=round(N*downs_f)
     # Array containing the IoU associated with each image
     IoU=np.zeros(len(img_files))
+    #TOREMOVE
+    masks=[]
+    
     
     for i in range(len(img_files)):
         
@@ -140,8 +183,49 @@ def evaluate_masks(img_files, gt_mask_files):
         print (f"Image {i}, IoU={IoU[i]}")
 
     
-    
-    return np.average(IoU)
+        #TOREMOVE
+        masks.append(predicted_mask)
+        if (i+1)==N_IMAGES:
+            break     
+       
+    #TOREMOVE - SHOW 5 WORST IMAGES
+    """
+    """
+    if N_IMGS_TO_SHOW>0:
+        print("INFO: Showing %d worst images..." % N_IMGS_TO_SHOW)
+        for value in sorted(IoU[:N_IMAGES])[:N_IMGS_TO_SHOW]:
+            index=list(IoU[:N_IMAGES]).index(value)
+            print("Image IoU %.3f" % value)
+            preprocessed_img=preprocess(img_as_float(io.imread(img_files[index])))
+            my_mask=masks[index]
+            gt_mask=io.imread(gt_mask_files[index])
+            
+            my_mask_cells=np.ones((my_mask.shape))*(my_mask>0)
+            gt_mask_cells=np.ones((gt_mask.shape))*(gt_mask>0)
+            comparison_img=np.zeros((my_mask.shape[0],my_mask.shape[1],3))
+            comparison_img[:,:,0]=my_mask_cells!=gt_mask_cells
+            comparison_img[:,:,1]=my_mask_cells==gt_mask_cells
+            alpha=0.4
+
+            comparison_img = gray2rgb(preprocessed_img) * (1.0 - alpha) + comparison_img * alpha
+            fig, axs = plt.subplots(2, 2)
+            fig.suptitle('Worst images')
+
+            axs[0,0].imshow(preprocessed_img, cmap='gray')
+            axs[0, 0].set_title('Preprocessed image')
+            axs[0,1].imshow(my_mask, cmap='gray')
+            axs[0, 1].set_title('Predicted mask')
+            axs[1,0].imshow(gt_mask, cmap='gray')
+            axs[1, 0].set_title('Gt mask')
+            axs[1,1].imshow(comparison_img)
+            axs[1, 1].set_title('Comparison')
+            plt.show()
+            
+            
+
+    #TOREMOVE
+    return np.average(IoU[:N_IMAGES])
+    #return np.average(IoU)
 
 plt.close('all')
 
