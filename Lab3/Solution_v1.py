@@ -140,8 +140,10 @@ plt.close('all')
 # -----------------------------------------------------------------------------
 
 data_dir= os.curdir
-path_im='reduced_subset/rawimages'
-path_gt='reduced_subset/groundtruth'
+# path_im='reduced_subset/rawimages'
+# path_gt='reduced_subset/groundtruth'
+path_im='Lab3/subset/rawimages'
+path_gt='Lab3/subset/groundtruth'
 img_files = [ os.path.join(data_dir,path_im,f) for f in sorted(os.listdir(os.path.join(data_dir,path_im))) 
             if (os.path.isfile(os.path.join(data_dir,path_im,f)) and f.endswith('.tif')) ]
 

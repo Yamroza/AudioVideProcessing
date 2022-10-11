@@ -24,10 +24,11 @@ import cv2
 #     FUNCTIONS
 #
 # -----------------------------------------------------------------------------
+
 # ----------------------------- Preprocess function -------------------------
 def preprocess(image):
     image = median(image)
-    image=exposure.equalize_adapthist(image)
+    image = exposure.equalize_adapthist(image)
     return image
 
 
@@ -46,19 +47,15 @@ def cell_segmentation(img_file):
     CELL_SEGMENTATION:
     - - -  COMPLETE - - -
     """
-    # Code for the BASELINE system
-    # - - - IMPLEMENT HERE YOUR PROPOSED SYSTEM - - -
         
     image = io.imread(img_file)
     image = img_as_float(image)
-    #PREPROCESSING
-    image=preprocess(image)
 
+    #PREPROCESSING
+    image = preprocess(image)
 
     otsu_th = threshold_otsu(image)
     predicted_mask = (image > otsu_th).astype('int')
-
-
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     return predicted_mask
@@ -154,8 +151,11 @@ plt.close('all')
 data_dir= os.curdir
 #path_im='reduced_subset/rawimages'
 #path_gt='reduced_subset/groundtruth'
-path_im='subset/rawimages'
-path_gt='subset/groundtruth'
+# path_im='subset/rawimages'
+# path_gt='subset/groundtruth'
+path_im='Lab3/subset/rawimages'
+path_gt='Lab3/subset/groundtruth'
+
 img_files = [ os.path.join(data_dir,path_im,f) for f in sorted(os.listdir(os.path.join(data_dir,path_im))) 
             if (os.path.isfile(os.path.join(data_dir,path_im,f)) and f.endswith('.tif')) ]
 
