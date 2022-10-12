@@ -27,7 +27,7 @@ from skimage.morphology import disk
 
 #TOREMOVE
 #process only n images to speed up testing
-N_IMAGES=8
+N_IMAGES=40
 #number of worst images to show
 N_IMGS_TO_SHOW=5
 
@@ -95,33 +95,17 @@ def cell_segmentation(img_file):
     i=4
     K = 2
     # apply K-means algorithm
-    ret,label1,center=cv2.kmeans(Z,K,None,criteria,attempts = 10, flags=cv2.KMEANS_RANDOM_CENTERS)
+    ret,label,center=cv2.kmeans(Z,K,None,criteria,attempts = 10, flags=cv2.KMEANS_RANDOM_CENTERS)
     # Now convert back into uint8, and make original image
     center = np.uint8(center)
-    res = center[label1.flatten()]
+    res = center[label.flatten()]
     res2 = res.reshape((img.shape))
-    
-    res2=res2[:,:,0]
-    print("type:", type(res2))
-    print("shaepe:", res2.shape)
-    # res2[res2 > 100] = 1
-    # res2[res2 <= 100] = 2
-    print(res2)
-
-    predicted_mask = label(res2 == 1)
-    # predicted_mask = postprocess(predicted_mask)
     # plot the original image and K-means image
     ax[0, 1].imshow(res2)
     ax[0,1].set_title('K = %s Image'%K)
     ax[1, 0].imshow(img)
     ax[1,0].set_title('Original Image')
     plt.show()
-
-    # predicted_mask = postprocess(res2)
-    
-    # predicted_mask = expand_labels(res2, distance=2)
-
-    return predicted_mask
 
     # image = io.imread(img_file)
     # image = img_as_float(image)
@@ -324,6 +308,6 @@ print("Number of image masks", len(gt_mask_files))
 #     Segmentation and evaluation
 #
 # -----------------------------------------------------------------------------
-# cell_segmentation(img_files[0])
-mean_score = evaluate_masks(img_files, gt_mask_files)
-print(f"Average IoU={mean_score}")
+cell_segmentation(img_files[0])
+# mean_score = evaluate_masks(img_files, gt_mask_files)
+# print(f"Average IoU={mean_score}")
