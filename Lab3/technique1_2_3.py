@@ -19,7 +19,7 @@ from skimage.measure import label
 from skimage.filters import threshold_otsu, gaussian, median, sobel
 from skimage.util import img_as_ubyte
 from skimage.color import label2rgb, gray2rgb
-from skimage.segmentation import  watershed
+from skimage.segmentation import  watershed, expand_labels
 import cv2
 from skimage.morphology import erosion, dilation, opening, closing
 from skimage.morphology import disk
@@ -49,16 +49,16 @@ def postprocess(image):
     footprint = disk(6)
     
     # works cool:
-    # image = dilation(image, footprint)
-    # image = erosion(image, footprint)
+    image = dilation(image, footprint)
+    image = erosion(image, footprint)
 
-    # meh:
-    image = closing(image, footprint) 
-    image = opening(image, footprint)
+    # # meh:
+    # image = closing(image, footprint) 
+    # image = opening(image, footprint)
 
-    # even worse:
-    image = opening(image, footprint)
-    image = closing(image, footprint)
+    # # even worse:
+    # image = opening(image, footprint)
+    # image = closing(image, footprint)
 
     return image
 
@@ -100,9 +100,9 @@ def cell_segmentation(img_file):
 
     ws = watershed(edges, markers)
     predicted_mask = label(ws == foreground)
+    predicted_mask = expand_labels(predicted_mask, distance=2)
     predicted_mask = postprocess(predicted_mask)
-    
-    #predicted_mask = expand_labels(predicted_mask, distance=2)
+
     """
     plt.imshow(label2rgb(predicted_mask, image=image, bg_label=0), cmap='gray')
     plt.show()
