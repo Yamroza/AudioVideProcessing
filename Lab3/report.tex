@@ -60,8 +60,11 @@ The baseline technique had an average IoU of 0.685. We improved the baseline tec
 
 The first improvement was by using a median filter instead of a Gaussian filter. The most significant impact on the IoU had a change in the segmentation algorithm. Which tried to distinguish each individual cell unline a simple Otsu threshold method. Another improvement was achieved by postprocessing the predicted mask. 
 
+The toughest problem for us were overlapping cells. Algorithm correctly divided them from the background, but couldn't distinguish them from each other. It often worsened our results and we still see place for improvement here.
+
 \newpage
 \section{Sample pictures}
+During modifying the methods we wanted to have better view, in which direction to go. For that reason we implemented additional work-function to show worst and best pictures. The image on the left is correct provided mask, image on the right is mask predicted by us. 
 
 
 \subsection{Worst pictures}
@@ -108,9 +111,3 @@ The first improvement was by using a median filter instead of a Gaussian filter.
 
 
 \end{document}
-
-
-
-
-
-
