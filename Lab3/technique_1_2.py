@@ -12,33 +12,30 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from skimage import io,exposure
+from skimage import io,exposure, morphology
 from sklearn.metrics import jaccard_score
 from skimage.util import img_as_float
 from skimage.measure import label
-from skimage.filters import threshold_otsu, gaussian, median, sobel
+from skimage.filters import threshold_otsu, median
 from skimage.util import img_as_ubyte
 from skimage.color import label2rgb, gray2rgb
 from skimage.segmentation import  watershed
+from scipy import ndimage as ndi
+from skimage.morphology import erosion, dilation, disk
 import cv2
 
-#TOREMOVE
-#process only n images to speed up testing
-N_IMAGES=2
-#number of worst images to show
-N_IMGS_TO_SHOW=1
+
 
 # -----------------------------------------------------------------------------
 #
 #     FUNCTIONS
 #
 # -----------------------------------------------------------------------------
-
-# ----------------------------- Preprocess function -------------------------
+# ----------------------------- Preprocess function ---------------------------
 def preprocess(image):
     image = median(image)
-    image = exposure.equalize_adapthist(image)
     return image
+    
 
 
 # ----------------------------- Segmentation function -------------------------
@@ -56,51 +53,30 @@ def cell_segmentation(img_file):
     CELL_SEGMENTATION:
     - - -  COMPLETE - - -
     """
+    # Code for the BASELINE system
+    # - - - IMPLEMENT HERE YOUR PROPOSED SYSTEM - - -
         
     image = io.imread(img_file)
     image = img_as_float(image)
-    #image = gaussian(image, 2)
-
     #PREPROCESSING
-    image=preprocess(image)
+    image=img_as_ubyte(preprocess(image))
+
     
-    #otsu_th = threshold_otsu(image)
-    #predicted_mask = (image > otsu_th).astype('int')
+    ret,thresh = cv2.threshold(image,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    kernel = np.ones((3,3),np.uint8)
+    background = cv2.dilate(thresh,kernel,iterations=2)
+    distances = cv2.distanceTransform(thresh,cv2.DIST_L2,3)
+    ret, foreground = cv2.threshold(distances,0.4*distances.max(),255,0)
+    foreground=np.uint8(foreground)
+    unknown = cv2.subtract(background,foreground)
+    ret, markers = cv2.connectedComponents(foreground)
+    markers[unknown==255] = 0
+    markers = cv2.watershed(cv2.imread(img_file),markers)
+    markers[background==0]=0
 
-    edges = sobel(image)
+    # Postprocessing
+    return markers
 
-    # Identify some background and foreground pixels from the intensity values.
-    # These pixels are used as seeds for watershed.
-    markers = np.zeros_like(image)
-    foreground, background = 1, 2
-    markers[image < 0.11] = background
-    markers[image > 0.55] = foreground
-
-    ws = watershed(edges, markers)
-    predicted_mask = label(ws == foreground)
-    
-    #predicted_mask = expand_labels(predicted_mask, distance=2)
-    """
-    plt.imshow(label2rgb(predicted_mask, image=image, bg_label=0), cmap='gray')
-    plt.show()
-    print(predicted_mask)
-    print(np.max(image))
-    print(np.mean(image))
-    print(np.median(image))
-
-
-
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    h, bins = exposure.histogram(image)
-    plt.figure()
-    plt.plot(bins,h)
-    plt.show()
-    plt.imshow(predicted_mask, cmap='gray')
-    plt.show()
-    """
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    return predicted_mask
     
 # ----------------------------- Evaluation function ---------------------------        
 def evaluate_masks(img_files, gt_mask_files):
@@ -133,9 +109,6 @@ def evaluate_masks(img_files, gt_mask_files):
     n=round(N*downs_f)
     # Array containing the IoU associated with each image
     IoU=np.zeros(len(img_files))
-    #TOREMOVE
-    masks=[]
-    
     
     for i in range(len(img_files)):
         
@@ -180,51 +153,9 @@ def evaluate_masks(img_files, gt_mask_files):
         # The IoU of each image is computed as the average of IoU of each groundtruth cell
         IoU[i]=np.average(IoU_max[:,0])
         print (f"Image {i}, IoU={IoU[i]}")
+        
 
-    
-        #TOREMOVE
-        masks.append(predicted_mask)
-        if (i+1)==N_IMAGES:
-            break     
-       
-    #TOREMOVE - SHOW 5 WORST IMAGES
-    """
-    """
-    if N_IMGS_TO_SHOW>0:
-        print("INFO: Showing %d worst images..." % N_IMGS_TO_SHOW)
-        for value in sorted(IoU[:N_IMAGES])[:N_IMGS_TO_SHOW]:
-            index=list(IoU[:N_IMAGES]).index(value)
-            print("Image IoU %.3f" % value)
-            preprocessed_img=preprocess(img_as_float(io.imread(img_files[index])))
-            my_mask=masks[index]
-            gt_mask=io.imread(gt_mask_files[index])
-            
-            my_mask_cells=np.ones((my_mask.shape))*(my_mask>0)
-            gt_mask_cells=np.ones((gt_mask.shape))*(gt_mask>0)
-            comparison_img=np.zeros((my_mask.shape[0],my_mask.shape[1],3))
-            comparison_img[:,:,0]=my_mask_cells!=gt_mask_cells
-            comparison_img[:,:,1]=my_mask_cells==gt_mask_cells
-            alpha=0.4
-
-            comparison_img = gray2rgb(preprocessed_img) * (1.0 - alpha) + comparison_img * alpha
-            fig, axs = plt.subplots(2, 2)
-            fig.suptitle('Worst images')
-
-            axs[0,0].imshow(preprocessed_img, cmap='gray')
-            axs[0, 0].set_title('Preprocessed image')
-            axs[0,1].imshow(my_mask, cmap='gray')
-            axs[0, 1].set_title('Predicted mask')
-            axs[1,0].imshow(gt_mask, cmap='gray')
-            axs[1, 0].set_title('Gt mask')
-            axs[1,1].imshow(comparison_img)
-            axs[1, 1].set_title('Comparison')
-            plt.show()
-            
-            
-
-    #TOREMOVE
-    return np.average(IoU[:N_IMAGES])
-    #return np.average(IoU)
+    return np.average(IoU)
 
 plt.close('all')
 
@@ -235,12 +166,10 @@ plt.close('all')
 # -----------------------------------------------------------------------------
 
 data_dir= os.curdir
-# path_im='reduced_subset/rawimages'
-# path_gt='reduced_subset/groundtruth'
-# path_im='subset/rawimages'
-# path_gt='subset/groundtruth'
-path_im='Lab3/subset/rawimages'
-path_gt='Lab3/subset/groundtruth'
+path_im='reduced_subset/rawimages'
+path_gt='reduced_subset/groundtruth'
+#path_im='Lab3/subset/rawimages'
+#path_gt='Lab3/subset/groundtruth'
 img_files = [ os.path.join(data_dir,path_im,f) for f in sorted(os.listdir(os.path.join(data_dir,path_im))) 
             if (os.path.isfile(os.path.join(data_dir,path_im,f)) and f.endswith('.tif')) ]
 
