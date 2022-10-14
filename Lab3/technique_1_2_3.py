@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                       %      
@@ -7,8 +5,13 @@
 %                                                                       %
 %  CELL SEGMENTATION                                                    %
 %                                                                       %
+%  Authors of changes:                                                  %    
+%  - David Stych                                                        %
+%  - Aleksandra Jamróz                                                  %
+%                                                                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 """
+
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,12 +28,12 @@ from skimage.morphology import erosion, dilation, disk
 import cv2
 
 
-
 # -----------------------------------------------------------------------------
 #
 #     FUNCTIONS
 #
 # -----------------------------------------------------------------------------
+
 # ----------------------------- Preprocess function ---------------------------
 def preprocess(image):
     image = median(image)
@@ -59,15 +62,13 @@ def cell_segmentation(img_file):
     CELL_SEGMENTATION:
     - - -  COMPLETE - - -
     """
-    # Code for the BASELINE system
-    # - - - IMPLEMENT HERE YOUR PROPOSED SYSTEM - - -
         
     image = io.imread(img_file)
     image = img_as_float(image)
-    #PREPROCESSING
+
+    # Preprocessing
     image=img_as_ubyte(preprocess(image))
 
-    
     ret,thresh = cv2.threshold(image,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     kernel = np.ones((3,3),np.uint8)
     background = cv2.dilate(thresh,kernel,iterations=2)
@@ -171,11 +172,10 @@ plt.close('all')
 #
 # -----------------------------------------------------------------------------
 
-data_dir= os.curdir
-path_im='reduced_subset/rawimages'
-path_gt='reduced_subset/groundtruth'
-#path_im='Lab3/subset/rawimages'
-#path_gt='Lab3/subset/groundtruth'
+data_dir = os.curdir
+path_im = 'reduced_subset/rawimages'
+path_gt = 'reduced_subset/groundtruth'
+
 img_files = [ os.path.join(data_dir,path_im,f) for f in sorted(os.listdir(os.path.join(data_dir,path_im))) 
             if (os.path.isfile(os.path.join(data_dir,path_im,f)) and f.endswith('.tif')) ]
 
