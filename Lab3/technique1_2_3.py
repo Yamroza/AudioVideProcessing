@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                       %      
@@ -7,8 +5,13 @@
 %                                                                       %
 %  CELL SEGMENTATION                                                    %
 %                                                                       %
+%  Authors of changes:                                                  %    
+%  - David Stych                                                        %
+%  - Aleksandra Jamróz                                                  %
+%                                                                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 """
+
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,9 +30,9 @@ from skimage.morphology import disk
 
 #TOREMOVE
 #process only n images to speed up testing
-N_IMAGES=40
+N_IMAGES = 40
 #number of worst images to show
-N_IMGS_TO_SHOW=5
+N_IMGS_TO_SHOW = 5
 
 # -----------------------------------------------------------------------------
 #
@@ -47,19 +50,8 @@ def preprocess(image):
 # ----------------------------- Postprocess function -------------------------
 def postprocess(image):
     footprint = disk(6)
-    
-    # works cool:
     image = dilation(image, footprint)
     image = erosion(image, footprint)
-
-    # # meh:
-    # image = closing(image, footprint) 
-    # image = opening(image, footprint)
-
-    # # even worse:
-    # image = opening(image, footprint)
-    # image = closing(image, footprint)
-
     return image
 
 
@@ -81,14 +73,11 @@ def cell_segmentation(img_file):
         
     image = io.imread(img_file)
     image = img_as_float(image)
-    #image = gaussian(image, 2)
 
-    #PREPROCESSING
-    image=preprocess(image)
-    
-    #otsu_th = threshold_otsu(image)
-    #predicted_mask = (image > otsu_th).astype('int')
+    # Preprocessing
+    image = preprocess(image)
 
+    # Segmentation 
     edges = sobel(image)
 
     # Identify some background and foreground pixels from the intensity values.
@@ -101,28 +90,10 @@ def cell_segmentation(img_file):
     ws = watershed(edges, markers)
     predicted_mask = label(ws == foreground)
     predicted_mask = expand_labels(predicted_mask, distance=2)
+
+    # Postprocessing
     predicted_mask = postprocess(predicted_mask)
 
-    """
-    plt.imshow(label2rgb(predicted_mask, image=image, bg_label=0), cmap='gray')
-    plt.show()
-    print(predicted_mask)
-    print(np.max(image))
-    print(np.mean(image))
-    print(np.median(image))
-
-
-
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    h, bins = exposure.histogram(image)
-    plt.figure()
-    plt.plot(bins,h)
-    plt.show()
-    plt.imshow(predicted_mask, cmap='gray')
-    plt.show()
-    """
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     return predicted_mask
     
 # ----------------------------- Evaluation function ---------------------------        
@@ -257,22 +228,23 @@ plt.close('all')
 #
 # -----------------------------------------------------------------------------
 
-data_dir= os.curdir
-# path_im='reduced_subset/rawimages'
-# path_gt='reduced_subset/groundtruth'
+data_dir = os.curdir
+path_im='reduced_subset/rawimages'
+path_gt='reduced_subset/groundtruth'
 # path_im='subset/rawimages'
 # path_gt='subset/groundtruth'
+
 path_im='Lab3/subset/rawimages'
 path_gt='Lab3/subset/groundtruth'
+
 img_files = [ os.path.join(data_dir,path_im,f) for f in sorted(os.listdir(os.path.join(data_dir,path_im))) 
             if (os.path.isfile(os.path.join(data_dir,path_im,f)) and f.endswith('.tif')) ]
 
 gt_mask_files = [ os.path.join(data_dir,path_gt,f) for f in sorted(os.listdir(os.path.join(data_dir,path_gt))) 
             if (os.path.isfile(os.path.join(data_dir,path_gt,f)) and f.endswith('.tif')) ]
-# img_files.sort()
-# gt_mask_files.sort()
-print("Number of train images", len(img_files))
-print("Number of image masks", len(gt_mask_files))
+
+print("Number of train images: ", len(img_files))
+print("Number of image masks: ", len(gt_mask_files))
 
 # -----------------------------------------------------------------------------
 #
