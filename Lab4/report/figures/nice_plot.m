@@ -9,7 +9,7 @@ function f=plot_pv(x,y1,y2,y_label,output_filename)
     xlabel("Epoch");
     ylabel(y_label);
    
-    legend("Training loss","Validation loss");
+    legend("Training","Validation");
     
     uistack(graph(1), 'bottom');
     set(gca,'FontSize',15);

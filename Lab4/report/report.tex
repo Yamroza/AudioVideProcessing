@@ -80,7 +80,7 @@ To the validation and test dataset, we applied the following transformations:
 
 The figure above shows the sample distribution in the dataset. Clearly, nevus is much more prevalent in the dataset, which is what we expect as it is a more common medical problem. \cite{wiki} Nevertheless, we used class weights as an argument in the loss function, leading to an improvement of the model. For each class, we calculated weight with the following formula: 
 $$\text{Class weight}=1-\frac{\text{Number of samples in the dataset}}{\text{Total number of samples}}$$
-\item We have used Adam optimizer resulting in faster learning.
+\item We have used Adam optimizer resulting in faster learning. Selected learning rate = 0.0001.
 \item We changed \textit{maxSize} argument to 0, meaning we have used the entire dataset. That was possible thanks to the Czech Technical University in Prague (the home university of one of the authors of this report), which allowed us to use their computational resources. \cite{ctu}
 \end{itemize}
 
@@ -100,13 +100,13 @@ Our best result was \textbf{0.913973} average AUC over the validation dataset.
 \begin{tabular}{|l|c|c|c|}
 \hline
 \rowcolor[HTML]{C0C0C0} 
-\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}{\color[HTML]{000000} \textbf{Model improvement}}}                                        & {\color[HTML]{000000} \textbf{\begin{tabular}[c]{@{}c@{}}AUC - binary problem\\ melanoma\end{tabular}}} & {\color[HTML]{000000} \textbf{\begin{tabular}[c]{@{}c@{}}AUC - binary problem\\ melanoma\end{tabular}}} & {\color[HTML]{000000} \textbf{\begin{tabular}[c]{@{}c@{}}AUC \\ Average\end{tabular}}} \\ \hline
+\multicolumn{1}{|c|}{\cellcolor[HTML]{C0C0C0}{\color[HTML]{000000} \textbf{Changes to the model}}}                                        & {\color[HTML]{000000} \textbf{\begin{tabular}[c]{@{}c@{}}AUC - binary problem\\ melanoma\end{tabular}}} & {\color[HTML]{000000} \textbf{\begin{tabular}[c]{@{}c@{}}AUC - binary problem\\ keratosis\end{tabular}}} & {\color[HTML]{000000} \textbf{\begin{tabular}[c]{@{}c@{}}AUC \\ Average\end{tabular}}} \\ \hline
 \rowcolor[HTML]{FFFFFF} 
 {\color[HTML]{000000} No changes - baseline}                                                                                           & {\color[HTML]{000000} 0.731111}                                                                         & {\color[HTML]{000000} 0.878307}                                                                         & {\color[HTML]{000000} 0.804709}                                                        \\ \hline
 \rowcolor[HTML]{FFFFFF} 
-{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Data augumentation\\ Entire dataset\\ Adam optimizer\end{tabular}}                    & {\color[HTML]{000000} 0.836389}                                                                         & {\color[HTML]{000000} 0.954806}                                                                         & {\color[HTML]{000000} 0.895597}                                                        \\ \hline
+{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Data augumentation\\ Using the entire dataset\\ Adam optimizer\end{tabular}}                    & {\color[HTML]{000000} 0.836389}                                                                         & {\color[HTML]{000000} 0.954806}                                                                         & {\color[HTML]{000000} 0.895597}                                                        \\ \hline
 \rowcolor[HTML]{FFFFFF} 
-{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Data augumentation\\ Entire dataset\\ Class balancing \\ Adam optimizer\end{tabular}} & {\color[HTML]{000000} 0.876667}                                                                         & {\color[HTML]{000000} 0.951279}                                                                         & {\color[HTML]{000000} \textbf{0.913973}}                                                        \\ \hline
+{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Data augumentation\\ Using the entire dataset\\ Class balancing \\ Adam optimizer\end{tabular}} & {\color[HTML]{000000} 0.876667}                                                                         & {\color[HTML]{000000} 0.951279}                                                                         & {\color[HTML]{000000} \textbf{0.913973}}                                                        \\ \hline
 \end{tabular}
 \end{table}
 
