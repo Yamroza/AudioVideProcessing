@@ -32,23 +32,23 @@ To the training dataset we applied following transformations:
 \begin{itemize}
 \item Random rotation of the image by $\pm30^{\circ}$
 
-\textit{torchvision: RandomRotation}
+\textit{torchvision: RandomRotation} \cite{randomrotation}
 \item Crop a random portion of image and resize it to a given size
 
-\textit{torchvision: RandomResizedCrop}\cite{randomresizedcrop}
+\textit{torchvision: RandomResizedCrop} \cite{randomresizedcrop}
 \item Randomly flipping the image horizontaly with probability of 50\%
 
-\textit{torchvision: RandomHorizontalFlip}\cite{randomhorizontalflip}
+\textit{torchvision: RandomHorizontalFlip} \cite{randomhorizontalflip}
 \item Converting to PyTorch tensor and normalization
 \end{itemize} 
 To the validation and test dataset we applied following transformations: 
 \begin{itemize}
 \item Resize the image to specific size
 
-\textit{torchvision: Resize}\cite{resize}
+\textit{torchvision: Resize} \cite{resize}
 \item Crop the image at the center to a specific size
 
-\textit{torchvision: CenterCrop}\cite{centercrop}
+\textit{torchvision: CenterCrop} \cite{centercrop}
 \item Converting to PyTorch tensor and normalization
 \end{itemize}       
 \item Class balancing
@@ -72,10 +72,13 @@ $$\text{Class weight}=1-\frac{\text{Number of samples in the dataset}}{\text{Tot
 \item We changed \textit{maxSize} argument to 0 meaning we have used the entire dataset. This was possible thanks to Czech Technical University in Prague (home university of one the authors of this report), which allowed us to use their computational resources. \cite{ctu}
 \end{itemize}
 
-\bibliographystyle{IEEEtran}
 
 
-\bibliography{IEEEabrv,references}
+\newpage
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
 
 
 

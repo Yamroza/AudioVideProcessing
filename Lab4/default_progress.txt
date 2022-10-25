@@ -1,0 +1,128 @@
+Epoch 0/24
+----------
+train Loss: 0.8388 AUC mel: 0.6146 sk: 0.6146 avg: 0.6146
+val Loss: 0.8680 AUC mel: 0.6619 sk: 0.8018 avg: 0.7319
+
+Epoch 1/24
+----------
+train Loss: 0.6827 AUC mel: 0.7124 sk: 0.7868 avg: 0.7496
+val Loss: 0.8912 AUC mel: 0.5736 sk: 0.8701 avg: 0.7219
+
+Epoch 2/24
+----------
+train Loss: 0.5762 AUC mel: 0.8255 sk: 0.8342 avg: 0.8299
+val Loss: 0.8619 AUC mel: 0.7447 sk: 0.8560 avg: 0.8004
+
+Epoch 3/24
+----------
+train Loss: 0.5597 AUC mel: 0.8091 sk: 0.8716 avg: 0.8403
+val Loss: 0.9302 AUC mel: 0.7244 sk: 0.8468 avg: 0.7856
+
+Epoch 4/24
+----------
+train Loss: 0.5039 AUC mel: 0.8543 sk: 0.9020 avg: 0.8782
+val Loss: 0.8067 AUC mel: 0.7053 sk: 0.8523 avg: 0.7788
+
+Epoch 5/24
+----------
+train Loss: 0.4185 AUC mel: 0.9189 sk: 0.9572 avg: 0.9380
+val Loss: 0.8956 AUC mel: 0.7044 sk: 0.8567 avg: 0.7806
+
+Epoch 6/24
+----------
+train Loss: 0.3714 AUC mel: 0.9330 sk: 0.9699 avg: 0.9514
+val Loss: 0.8287 AUC mel: 0.7114 sk: 0.8748 avg: 0.7931
+
+Epoch 7/24
+----------
+train Loss: 0.3601 AUC mel: 0.9344 sk: 0.9667 avg: 0.9506
+val Loss: 0.8361 AUC mel: 0.7128 sk: 0.8792 avg: 0.7960
+
+Epoch 8/24
+----------
+train Loss: 0.3369 AUC mel: 0.9437 sk: 0.9730 avg: 0.9583
+val Loss: 0.8713 AUC mel: 0.7236 sk: 0.8741 avg: 0.7989
+
+Epoch 9/24
+----------
+train Loss: 0.3345 AUC mel: 0.9359 sk: 0.9775 avg: 0.9567
+val Loss: 0.8447 AUC mel: 0.7314 sk: 0.8763 avg: 0.8039
+
+Epoch 10/24
+----------
+train Loss: 0.3188 AUC mel: 0.9530 sk: 0.9761 avg: 0.9645
+val Loss: 0.8454 AUC mel: 0.7311 sk: 0.8783 avg: 0.8047
+
+Epoch 11/24
+----------
+train Loss: 0.3067 AUC mel: 0.9540 sk: 0.9724 avg: 0.9632
+val Loss: 0.8466 AUC mel: 0.7292 sk: 0.8790 avg: 0.8041
+
+Epoch 12/24
+----------
+train Loss: 0.3130 AUC mel: 0.9456 sk: 0.9793 avg: 0.9624
+val Loss: 0.8491 AUC mel: 0.7292 sk: 0.8787 avg: 0.8040
+
+Epoch 13/24
+----------
+train Loss: 0.3160 AUC mel: 0.9453 sk: 0.9784 avg: 0.9618
+val Loss: 0.8446 AUC mel: 0.7297 sk: 0.8796 avg: 0.8047
+
+Epoch 14/24
+----------
+train Loss: 0.3172 AUC mel: 0.9420 sk: 0.9828 avg: 0.9624
+val Loss: 0.8587 AUC mel: 0.7286 sk: 0.8779 avg: 0.8032
+
+Epoch 15/24
+----------
+train Loss: 0.2977 AUC mel: 0.9598 sk: 0.9808 avg: 0.9703
+val Loss: 0.8578 AUC mel: 0.7289 sk: 0.8781 avg: 0.8035
+
+Epoch 16/24
+----------
+train Loss: 0.3033 AUC mel: 0.9527 sk: 0.9802 avg: 0.9664
+val Loss: 0.8568 AUC mel: 0.7289 sk: 0.8783 avg: 0.8036
+
+Epoch 17/24
+----------
+train Loss: 0.2868 AUC mel: 0.9627 sk: 0.9854 avg: 0.9740
+val Loss: 0.8563 AUC mel: 0.7292 sk: 0.8783 avg: 0.8037
+
+Epoch 18/24
+----------
+train Loss: 0.3046 AUC mel: 0.9596 sk: 0.9782 avg: 0.9689
+val Loss: 0.8551 AUC mel: 0.7289 sk: 0.8783 avg: 0.8036
+
+Epoch 19/24
+----------
+train Loss: 0.3240 AUC mel: 0.9407 sk: 0.9793 avg: 0.9600
+val Loss: 0.8540 AUC mel: 0.7289 sk: 0.8799 avg: 0.8044
+
+Epoch 20/24
+----------
+train Loss: 0.3065 AUC mel: 0.9522 sk: 0.9759 avg: 0.9640
+val Loss: 0.8540 AUC mel: 0.7289 sk: 0.8799 avg: 0.8044
+
+Epoch 21/24
+----------
+train Loss: 0.3298 AUC mel: 0.9337 sk: 0.9766 avg: 0.9552
+val Loss: 0.8539 AUC mel: 0.7289 sk: 0.8799 avg: 0.8044
+
+Epoch 22/24
+----------
+train Loss: 0.2956 AUC mel: 0.9552 sk: 0.9829 avg: 0.9690
+val Loss: 0.8539 AUC mel: 0.7289 sk: 0.8801 avg: 0.8045
+
+Epoch 23/24
+----------
+train Loss: 0.3000 AUC mel: 0.9523 sk: 0.9854 avg: 0.9689
+val Loss: 0.8539 AUC mel: 0.7289 sk: 0.8801 avg: 0.8045
+
+Epoch 24/24
+----------
+train Loss: 0.3034 AUC mel: 0.9610 sk: 0.9797 avg: 0.9703
+val Loss: 0.8539 AUC mel: 0.7286 sk: 0.8801 avg: 0.8043
+
+Training complete in 4m 55s
+Best model in epoch 10 val AUCs: mel 0.731111 sk 0.878307 avg 0.804709
+
