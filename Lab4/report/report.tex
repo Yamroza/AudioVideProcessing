@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage[paper=a4paper,margin=1in]{geometry}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{url}
+
+\title{Image classification with CNNs}
+\author{David Štych\\ Aleksandra Jamróz}
+\date{\today{}}
+
+
+
+\begin{document}
+\maketitle
+\newpage
+
+
+\section*{Baseline performance}
+%TODO
+%just run it, see what it does, maybe some plot
+
+
+\section*{Improvements}
+
+\begin{itemize}
+\item We have used data augumentation to randomize training data to reduce overfitting and achieve better performance \cite{somewebsite}
+
+To the training dataset we applied following transformations: 
+\begin{itemize}
+\item Random rotation of the image by $\pm30^{\circ}$
+
+\textit{torchvision: RandomRotation}
+\item Crop a random portion of image and resize it to a given size
+
+\textit{torchvision: RandomResizedCrop}\cite{randomresizedcrop}
+\item Randomly flipping the image horizontaly with probability of 50\%
+
+\textit{torchvision: RandomHorizontalFlip}\cite{randomhorizontalflip}
+\item Converting to PyTorch tensor and normalization
+\end{itemize} 
+To the validation and test dataset we applied following transformations: 
+\begin{itemize}
+\item Resize the image to specific size
+
+\textit{torchvision: Resize}\cite{resize}
+\item Crop the image at the center to a specific size
+
+\textit{torchvision: CenterCrop}\cite{centercrop}
+\item Converting to PyTorch tensor and normalization
+\end{itemize}       
+\item Class balancing
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[H]
+\centering
+\begin{tabular}{|
+>{\columncolor[HTML]{FFFFFF}}c |c|}
+\hline
+\cellcolor[HTML]{C0C0C0}{\color[HTML]{000000} \textbf{Label}} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{000000} \textbf{Number of samples in the dataset}} \\ \hline
+{\color[HTML]{000000} nevus}                                  & {\color[HTML]{000000} 1372}                                                              \\ \hline
+{\color[HTML]{000000} melanoma}                               & {\color[HTML]{000000} 374}                                                               \\ \hline
+{\color[HTML]{000000} keratosis}                              & {\color[HTML]{000000} 254}                                                               \\ \hline
+\end{tabular}
+\end{table}
+Table above shows sample distributuion in the dataset. Clearly nevus is much more prevelant in the dataset, which is what we would expect as it is more common medical problem. \cite{wiki} Nevertheless, we used class weights as an argument in the loss function and it lead to an improvement on the validation dataset. For each class we calculated weight with the following formula: 
+$$\text{Class weight}=1-\frac{\text{Number of samples in the dataset}}{\text{Total number of samples}}$$
+\item We have used Adam optimizer resultin in faster learning.
+\item We changed \textit{maxSize} argument to 0 meaning we have used the entire dataset. This was possible thanks to Czech Technical University in Prague (home university of one the authors of this report), which allowed us to use their computational resources. \cite{ctu}
+\end{itemize}
+
+\bibliographystyle{IEEEtran}
+
+
+\bibliography{IEEEabrv,references}
+
+
+
+
+
+
+
+\end{document}
