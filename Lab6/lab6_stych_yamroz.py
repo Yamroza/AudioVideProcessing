@@ -21,11 +21,16 @@ import librosa as lbs
 # Import our custom lib for audio feature extraction (makes use of librosa)
 import audio_features as af
 
+
+NUMBER_OF_FEATURES=5
+
+
 ##############################################################################
 # Feature extraction function
 ##############################################################################
 
-def extract_features(X,verbose = True):
+def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
+    print(verbose,flen,nsub,hop)
     """
     >> Function to be completed by the student
     Extracts a feature matrix for the input data X
@@ -38,7 +43,7 @@ def extract_features(X,verbose = True):
     sr = lbs.get_samplerate(X[0])
     
     # Specify the number of features to extract
-    n_feat = 2
+    n_feat = NUMBER_OF_FEATURES
     
     # Generate empty feature matrix
     M = np.zeros((num_data,n_feat))
@@ -73,13 +78,21 @@ def extract_features(X,verbose = True):
         # Compute max value (ignore nan values)
         M[i,1] = np.nanmax(energy_entropies)
         
+        #TODO
         ##########################################
         # Extract additional features
-        #
-        #
-        # >>>>> ADD CODE HERE
-        #
-        #
+        
+        #MEAN OF SPECTRAL ENTROPIES
+        spectral_entropies=af.get_spectral_entropy(audio_data,flen=flen,hop=hop,nsub=nsub)                                           
+        M[i,2] = np.nanmean(spectral_entropies)
+        
+        #MEAN OF SPECTRAL FLUX
+        spectral_flux=af.get_spectral_flux(audio_data,flen=flen,hop=hop)                                           
+        M[i,3] = np.nanmean(spectral_flux)
+        
+        #MEAN OF ZERO CROSSING RATES
+        zero_rates=af.get_zero_crossing_rate(audio_data, flen=flen, hop=hop)
+        M[i,4] = np.nanmean(zero_rates)
         ##########################################
         
         if verbose:

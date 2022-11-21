@@ -1,0 +1,11 @@
+Using default 30% dataset test size
+
+
+FEATURES                                                        AUC
+
+Baseline                                                        0.486
+Added mean of spectral entropies                                0.554
+Added mean of spectral flux                                     0.577
+Added zero crossing rate                                        0.6
+
+
