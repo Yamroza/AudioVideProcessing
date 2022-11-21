@@ -197,7 +197,7 @@ if TUNE_PARAMETERS:
 ##############################################################################
 
 # Extract features for the training set
-M_train = extract_features(X_train,verbose=False)   
+M_train = extract_features(X_train)   
 # Normalize    
 scaler = StandardScaler().fit(M_train)
 M_train_n = scaler.transform(M_train)
@@ -213,7 +213,7 @@ clf.fit(M_train_n, y_train)
 
 
 # Extract features for the test set
-M_test = extract_features(X_test,verbose=False)   
+M_test = extract_features(X_test)   
 # Normalize
 M_test_n = scaler.transform(M_test)
 
