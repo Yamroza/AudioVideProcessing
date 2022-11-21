@@ -77,7 +77,6 @@ def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
         # Compute max value (ignore nan values)
         M[i,1] = np.nanmax(energy_entropies)
 
-        #TODO
         ##########################################
         # Extract additional features
         
@@ -96,8 +95,8 @@ def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
         #M[i,5] = np.nanmax(zero_rates)
         
         
-        #This made it worse too
         #MEAN OF SECTRAL CONTRAST
+        #This made it worse too
         #spectral_contrast=af.get_spectral_contrast(audio_data, flen=flen, hop=hop)
         #M[i,6] = np.nanmean(spectral_contrast)
 
@@ -134,7 +133,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                     test_size=test_size, 
                                                     random_state=ran_seed)
                                                     
-#TODO
+
 ##############################################################################
 # Tuning Process
 ##############################################################################    

@@ -17,11 +17,13 @@
 \maketitle
 
 \section*{Introduction}
-%TODO some bullshit useless intro here
+Numerous industries have found extensive use for audio processing. Nowadays, we can meet applied audio processing every day, from using apps like Shazam to find a song to voice recognition used in translators, home assistants, etc.
+
+In this laboratory, we focus on feature extraction, which means the extraction of various properties-features from the original sound file. 
 
 
 \section*{Feature extraction}
-On top of the baseline implementation we added another three features. The five features we used are:
+On top of the baseline implementation, we added another three features. The five features we used are:
 \begin{enumerate}
 %1
 \item \textit{Average value of the entropy of the energy of the audio signal’s frames}
@@ -34,32 +36,32 @@ On top of the baseline implementation we added another three features. The five 
 \item Included in the baseline code
 \end{itemize}
 %3
-\item \textit{Average value of the spectral entropy of the audio signal’s frames}
+\item Average value of the spectral entropy of the audio signal’s frames
 \begin{itemize}
 \item Implemented in the provided code
-%TODO some justification here por favor
+\item Spectral entropy describes the pureness/noisiness of the signal. It might be helpful to our model.
 \end{itemize}
 %4
-\item \textit{Average value of the spectral flux of the audio signal’s frames}
+\item Average value of the spectral flux of the audio signal’s frames
 \begin{itemize}
 \item Implemented in the provided code
-%TODO some justification here por favor
+Spectral flux is a measure of change in the signal power spectrum. Minor and major chords should have different rates of change. Therefore, it is useful for classification.
 \end{itemize}
 %5
-\item \textit{Average value of the zero crossing rates of the audio signal’s frames}
+\item Average value of the zero crossing rates of the audio signal’s frames
 \begin{itemize}
 \item Implemented in the provided code
-%TODO some justification here por favor
+\item The zero crossing rate is the rate at which the signal goes through zero (changing from positive to negative and vice versa). It is one of the commonly used features to use when analyzing music samples. It led to noticeable improvement during our testing.
 \end{itemize}
 
 
 \end{enumerate}
 
-We have also tried experimenting with other features. We have tried adding \textit{maximum value of the zero crossing rate of the audio signal’s frames} and \textit{average value of the spectral contrast of the audio signal’s frames}. However, in both cases a detremental effect was observed, so we decided not to include them in our model.
+We have also tried experimenting with other features. We have been attempting to add \textit{maximum value of the zero crossing rate of the audio signal’s frames} and \textit{average value of the spectral contrast of the audio signal’s frames}. However, in both cases, a detrimental effect was observed, so we decided not to include them in our model.
 
 
 \section*{Results}
-We kept the default split ration in the dataset (70\% training, 30\% testing). Firstly, we kept the default parameters (frame length, number of subframes and hop length) and just experimented with the features. We tracked the progress and recorded the results in the table below.
+We kept the default split ratio in the dataset (70\% training, 30\% testing). Firstly, we kept the default parameters (frame length, number of subframes, and hop length) and experimented with the features. We tracked the progress and recorded the results in the table below.
 
 
 \begin{table}[H]
@@ -79,9 +81,9 @@ We kept the default split ration in the dataset (70\% training, 30\% testing). F
 \end{table}
 
 
-After we have decided which features to use, an automatic algorith was implemented to tune the parameters of the feature engineering. Sets of three parameters are defined in a list and a function goes through the list and tries to train and test the model. AUC is calculated and stored in another list. After completion the set of parameters with the highest AUC is selected. Effect of the parameter change can be seen in the table below.
+After we had decided which features to use, we implemented an automatic algorithm to tune the parameters of the feature engineering. Sets of three parameters are defined in a list, and a function goes through the list and tries to train and test the model. AUC is calculated and stored in another list. After completion, the set of parameters with the highest AUC is selected. The effect of the parameter change can be seen in the table below.
 
-Best parameters found were:
+The best parameters found were:
 \begin{itemize}
 \item Frame length: 1024
 \item Number of subframes: 8
@@ -109,11 +111,15 @@ Best parameters found were:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{figures/best_result.png}
-\caption{Best result achieved}
+\hspace*{-1.3cm}
+\includegraphics[width=0.9\paperwidth]{figures/best_result.png}
+\caption{ROC curve plot - best-achieved result}
 \end{figure}
 
 
 
 \end{document}
+
+
+
 
