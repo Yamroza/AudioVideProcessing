@@ -11,7 +11,7 @@ from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
 from os import listdir
-# Import ML tools
+# Import ML tool
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -22,7 +22,7 @@ import librosa as lbs
 import audio_features as af
 
 
-NUMBER_OF_FEATURES=5
+NUMBER_OF_FEATURES=6
 #If set to true, a function to find the parameters will be called. Results printed and script killed.
 TUNE_PARAMETERS=False
 
@@ -85,9 +85,17 @@ def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
         spectral_flux=af.get_spectral_flux(audio_data,flen=flen,hop=hop)                                           
         M[i,3] = np.nanmean(spectral_flux)
         
-        #MEAN OF ZERO CROSSING RATES
+        #MEAN AND MAX OF ZERO CROSSING RATES
         zero_rates=af.get_zero_crossing_rate(audio_data, flen=flen, hop=hop)
         M[i,4] = np.nanmean(zero_rates)
+        #This made it worse
+        #M[i,5] = np.nanmax(zero_rates)
+        
+        
+        #MEAN OF SECTRAL CONTRAST
+        spectral_contrast=af.get_spectral_contrast(audio_data, flen=flen, hop=hop)
+        M[i,5] = np.nanmean(spectral_contrast)
+
         ##########################################
         
         if verbose:

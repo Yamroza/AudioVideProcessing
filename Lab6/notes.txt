@@ -1,11 +1,12 @@
-Using default 30% dataset test size
+Using default 30% dataset test size. 
+Default parameters
+flen=512,nsub=10,hop=128
 
+FEATURES                                                                AUC
 
-FEATURES                                                        AUC
-
-Baseline                                                        0.486
-Added mean of spectral entropies                                0.554
-Added mean of spectral flux                                     0.577
-Added zero crossing rate                                        0.6
-
-
+Baseline                                                                0.486
+Added mean of spectral entropies                                        0.554
+Added mean of spectral flux                                             0.577
+Added mean of zero crossing rate                                        0.6
+Added max of zero crossing rate                                         0.588 (worse wtf)
+Removed the previous bullshit and added mean of spectral contrast       0.583 (even worse what the fuck)
