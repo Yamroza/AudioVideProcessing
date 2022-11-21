@@ -23,14 +23,15 @@ import audio_features as af
 
 
 NUMBER_OF_FEATURES=5
+#If set to true, a function to find the parameters will be called. Results printed and script killed.
+TUNE_PARAMETERS=False
 
 
 ##############################################################################
 # Feature extraction function
 ##############################################################################
 
-def extract_featuresy(X,verbose = True,flen=512,nsub=10,hop=128):
-    print(verbose,flen,nsub,hop)
+def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
     """
     >> Function to be completed by the student
     Extracts a feature matrix for the input data X
@@ -48,13 +49,7 @@ def extract_featuresy(X,verbose = True,flen=512,nsub=10,hop=128):
     # Generate empty feature matrix
     M = np.zeros((num_data,n_feat))
     
-    # Feature extraction parameters
-    # Frame length
-    flen = 512
-    # Number of subframes
-    nsub = 10
-    # Hop length
-    hop = 128
+
     # Threshold below reference to consider as silence (dB) 
     thr_db = 20
     
@@ -77,7 +72,7 @@ def extract_featuresy(X,verbose = True,flen=512,nsub=10,hop=128):
         M[i,0] = np.nanmean(energy_entropies)
         # Compute max value (ignore nan values)
         M[i,1] = np.nanmax(energy_entropies)
-        
+
         #TODO
         ##########################################
         # Extract additional features
@@ -125,13 +120,65 @@ ran_seed = 999
 X_train, X_test, y_train, y_test = train_test_split(X, y, 
                                                     test_size=test_size, 
                                                     random_state=ran_seed)
-
+                                                    
+#TODO
+##############################################################################
+# Tuning Process
+##############################################################################    
+if TUNE_PARAMETERS:
+    #[flen,nsub,hop]
+    parameter_list=[
+        [512,10,128],
+        [1024,10,128]]
+    scores=[]       
+    for parameters in parameter_list:
+        print("Testing parameters")
+        print("flen =",parameters[0])
+        print("nsub =",parameters[1])
+        print("hop  =",parameters[2])
+        print()
+        #TRAIN MODEL
+        M_train = extract_features(X_train,
+                                    verbose=False,
+                                    flen=parameters[0],
+                                    nsub=parameters[1],
+                                    hop=parameters[2])     
+        scaler = StandardScaler().fit(M_train)
+        M_train_n = scaler.transform(M_train)
+        clf = SVC(probability=True)
+        clf.fit(M_train_n, y_train)
+        
+        
+        #TEST MODEL
+        M_test = extract_features(X_test,
+                                    verbose=False,
+                                    flen=parameters[0],
+                                    nsub=parameters[1],
+                                    hop=parameters[2])    
+        M_test_n = scaler.transform(M_test)
+        y_pred = clf.predict(M_test_n)
+        y_scores = clf.predict_proba(M_test_n)[:,1]
+        false_positive_rate, true_positive_rate, _ = roc_curve(y_test, y_scores)
+        auc_svm = roc_auc_score(y_test, y_scores)
+        scores.append(auc_svm)
+    max_value = max(scores)
+    best_params=parameter_list[scores.index(max_value)]
+    print(best_params)
+    print()
+    print("Parameters tuned. Maximum AUC =",max_value)
+    print("flen =",best_params[0])
+    print("nsub =",best_params[1])
+    print("hop  =",best_params[2])
+    #KILL THE SCRIPT
+    import sys
+    sys.exit()
+                                    
 ##############################################################################
 # Training Process
 ##############################################################################
 
 # Extract features for the training set
-M_train = extract_features(X_train)   
+M_train = extract_features(X_train,verbose=False)   
 # Normalize    
 scaler = StandardScaler().fit(M_train)
 M_train_n = scaler.transform(M_train)
@@ -147,7 +194,7 @@ clf.fit(M_train_n, y_train)
 
 
 # Extract features for the test set
-M_test = extract_features(X_test)   
+M_test = extract_features(X_test,verbose=False)   
 # Normalize
 M_test_n = scaler.transform(M_test)
 
