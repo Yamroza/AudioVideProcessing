@@ -29,7 +29,7 @@ NUMBER_OF_FEATURES=5
 # Feature extraction function
 ##############################################################################
 
-def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
+def extract_featuresy(X,verbose = True,flen=512,nsub=10,hop=128):
     print(verbose,flen,nsub,hop)
     """
     >> Function to be completed by the student
