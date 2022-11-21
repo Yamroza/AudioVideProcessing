@@ -31,7 +31,7 @@ TUNE_PARAMETERS=False
 # Feature extraction function
 ##############################################################################
 
-def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
+def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
     """
     >> Function to be completed by the student
     Extracts a feature matrix for the input data X
