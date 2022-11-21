@@ -1,12 +1,43 @@
 Using default 30% dataset test size. 
+
+####################################################################################################
+FEATURE EXTRACTION
+####################################################################################################
 Default parameters
 flen=512,nsub=10,hop=128
 
-FEATURES                                                                AUC
-
+FEATURES                                                                AUC 
+####################################################################################################
 Baseline                                                                0.486
 Added mean of spectral entropies                                        0.554
 Added mean of spectral flux                                             0.577
 Added mean of zero crossing rate                                        0.6
 Added max of zero crossing rate                                         0.588 (worse wtf)
 Removed the previous bullshit and added mean of spectral contrast       0.583 (even worse what the fuck)
+
+
+
+####################################################################################################
+PARAMETER TUNING
+####################################################################################################
+
+Kept features with AUC 0.6, that means:
+Baseline + mean of spectral entropies + mean of specral flux + mean of zero crossing rate
+
+Tuned the parameters, tested all the combinations of flen=512/1024, nsub=10/8, hop=128/256:
+flen    nsub    hop     AUC    
+512     10      128     0.6004248506865341
+512     10      256     0.5943907394864848
+512     8       128     0.6050427929314697
+512     8       256     0.55406071054738
+1024    10      128     0.539899020996244
+1024    10      256     0.5793670340496274
+1024    8       128     0.6409088110338033
+1024    8       256     0.6423557662705497
+
+BEST PARAMETERS:
+flen=1024    
+nsub=8       
+hop=256 
+
+

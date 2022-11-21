@@ -22,7 +22,7 @@ import librosa as lbs
 import audio_features as af
 
 
-NUMBER_OF_FEATURES=6
+NUMBER_OF_FEATURES=5
 #If set to true, a function to find the parameters will be called. Results printed and script killed.
 TUNE_PARAMETERS=False
 
@@ -37,6 +37,10 @@ def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
     Extracts a feature matrix for the input data X
     ARGUMENTS:
         X: Audio data file paths to analyze
+        verbose: Verbose prints
+        flen: Frame length (default in template.py was 512)
+        nsub: Number of subframes (default in template.py was 10)
+        hop: Hop length (default in template.py was 128)
     """
     # Number of samples to process
     num_data = len(X)
@@ -92,9 +96,10 @@ def extract_features(X,verbose = True,flen=512,nsub=10,hop=128):
         #M[i,5] = np.nanmax(zero_rates)
         
         
+        #This made it worse too
         #MEAN OF SECTRAL CONTRAST
-        spectral_contrast=af.get_spectral_contrast(audio_data, flen=flen, hop=hop)
-        M[i,5] = np.nanmean(spectral_contrast)
+        #spectral_contrast=af.get_spectral_contrast(audio_data, flen=flen, hop=hop)
+        #M[i,6] = np.nanmean(spectral_contrast)
 
         ##########################################
         
@@ -137,14 +142,19 @@ if TUNE_PARAMETERS:
     #[flen,nsub,hop]
     parameter_list=[
         [512,10,128],
-        [1024,10,128]]
+        [512,10,256],
+        [512,8,128],
+        [512,8,256],
+        [1024,10,128],
+        [1024,10,256],
+        [1024,8,128],
+        [1024,8,256]]
     scores=[]       
     for parameters in parameter_list:
         print("Testing parameters")
         print("flen =",parameters[0])
         print("nsub =",parameters[1])
         print("hop  =",parameters[2])
-        print()
         #TRAIN MODEL
         M_train = extract_features(X_train,
                                     verbose=False,
@@ -169,6 +179,8 @@ if TUNE_PARAMETERS:
         false_positive_rate, true_positive_rate, _ = roc_curve(y_test, y_scores)
         auc_svm = roc_auc_score(y_test, y_scores)
         scores.append(auc_svm)
+        print("AUC  =",auc_svm)
+        print()
     max_value = max(scores)
     best_params=parameter_list[scores.index(max_value)]
     print(best_params)
