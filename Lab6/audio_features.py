@@ -193,7 +193,7 @@ def get_spectral_contrast(x, flen=1024, hop=256):
       flen: frame length
       hop: Hop length
   """
-  spcontrast = lbs.feature.spectral_contrast(y=x, n_fft=flen, hop_length=256)
+  spcontrast = lbs.feature.spectral_contrast(y=x, n_fft=flen, hop_length=hop)
   return spcontrast.T
 
 
@@ -205,7 +205,7 @@ def get_spectral_flatness(x, flen=1024, hop=256):
       flen: frame length
       hop: Hop length
   """
-  spflatness = lbs.feature.spectral_flatness(y=x, n_fft=flen, hop_length=256)
+  spflatness = lbs.feature.spectral_flatness(y=x, n_fft=flen, hop_length=hop)
   spflatness = np.squeeze(spflatness)
   return spflatness
 

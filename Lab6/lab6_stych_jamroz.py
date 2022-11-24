@@ -22,9 +22,10 @@ import librosa as lbs
 import audio_features as af
 
 
-NUMBER_OF_FEATURES=5
-#If set to true, a function to find the parameters will be called. Results printed and script killed.
-TUNE_PARAMETERS=False
+NUMBER_OF_FEATURES = 5
+
+# If set to true, a function to find the parameters will be called. Results printed and script killed.
+TUNE_PARAMETERS = False
 
 
 ##############################################################################
@@ -33,7 +34,6 @@ TUNE_PARAMETERS=False
 
 def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
     """
-    >> Function to be completed by the student
     Extracts a feature matrix for the input data X
     ARGUMENTS:
         X: Audio data file paths to analyze
@@ -51,9 +51,8 @@ def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
     n_feat = NUMBER_OF_FEATURES
     
     # Generate empty feature matrix
-    M = np.zeros((num_data,n_feat))
+    M = np.zeros((num_data, n_feat))
     
-
     # Threshold below reference to consider as silence (dB) 
     thr_db = 20
     
@@ -61,11 +60,9 @@ def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
         if verbose:
             print('%d/%d... ' % (i+1, num_data), end='')
         # Read audio signal
-        audio_data,_ = lbs.load(X[i], sr=sr)
+        audio_data, _ = lbs.load(X[i], sr=sr)
         # Preprocessing (Trim + center)
         audio_data = af.preprocess_audio(audio_data, thr=thr_db)
-        
-
         
         # Get first two features (Energy entropy mean and max)
         energy_entropies = af.get_energy_entropy(audio_data, 
@@ -74,36 +71,38 @@ def extract_features(X,verbose = True,flen=1024,nsub=8,hop=256):
                                                      nsub=nsub)
         # Compute mean (ignore nan values)
         M[i,0] = np.nanmean(energy_entropies)
+
         # Compute max value (ignore nan values)
         M[i,1] = np.nanmax(energy_entropies)
 
         ##########################################
         # Extract additional features
         
-        #MEAN OF SPECTRAL ENTROPIES
-        spectral_entropies=af.get_spectral_entropy(audio_data,flen=flen,hop=hop,nsub=nsub)                                           
+        # MEAN OF SPECTRAL ENTROPIES
+        spectral_entropies = af.get_spectral_entropy(audio_data,flen=flen,hop=hop,nsub=nsub)                                           
         M[i,2] = np.nanmean(spectral_entropies)
         
-        #MEAN OF SPECTRAL FLUX
-        spectral_flux=af.get_spectral_flux(audio_data,flen=flen,hop=hop)                                           
+        # MEAN OF SPECTRAL FLUX
+        spectral_flux = af.get_spectral_flux(audio_data,flen=flen,hop=hop)                                           
         M[i,3] = np.nanmean(spectral_flux)
         
-        #MEAN AND MAX OF ZERO CROSSING RATES
-        zero_rates=af.get_zero_crossing_rate(audio_data, flen=flen, hop=hop)
+        # MEAN AND MAX OF ZERO CROSSING RATES
+        zero_rates = af.get_zero_crossing_rate(audio_data, flen=flen, hop=hop)
         M[i,4] = np.nanmean(zero_rates)
-        #This made it worse
-        #M[i,5] = np.nanmax(zero_rates)
+
+        # Next attempts didn't improve performance of the model:
+
+        # M[i,5] = np.nanmax(zero_rates)
         
-        
-        #MEAN OF SECTRAL CONTRAST
-        #This made it worse too
-        #spectral_contrast=af.get_spectral_contrast(audio_data, flen=flen, hop=hop)
-        #M[i,6] = np.nanmean(spectral_contrast)
+        # MEAN OF SPECTRAL CONTRAST
+        # spectral_contrast=af.get_spectral_contrast(audio_data, flen=flen, hop=hop)
+        # M[i,6] = np.nanmean(spectral_contrast)
 
         ##########################################
         
         if verbose:
             print('Done')
+
     return M
 
 ##############################################################################
@@ -154,7 +153,8 @@ if TUNE_PARAMETERS:
         print("flen =",parameters[0])
         print("nsub =",parameters[1])
         print("hop  =",parameters[2])
-        #TRAIN MODEL
+
+        # TRAIN MODEL
         M_train = extract_features(X_train,
                                     verbose=False,
                                     flen=parameters[0],
@@ -166,7 +166,7 @@ if TUNE_PARAMETERS:
         clf.fit(M_train_n, y_train)
         
         
-        #TEST MODEL
+        # TEST MODEL
         M_test = extract_features(X_test,
                                     verbose=False,
                                     flen=parameters[0],
@@ -180,6 +180,7 @@ if TUNE_PARAMETERS:
         scores.append(auc_svm)
         print("AUC  =",auc_svm)
         print()
+
     max_value = max(scores)
     best_params=parameter_list[scores.index(max_value)]
     print(best_params)
@@ -210,7 +211,6 @@ clf.fit(M_train_n, y_train)
 ##############################################################################
 # Evaluation Process
 ##############################################################################
-
 
 # Extract features for the test set
 M_test = extract_features(X_test)   
